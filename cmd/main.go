@@ -3,14 +3,34 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/basebandit/gocash/pkg/api"
 	"github.com/basebandit/gocash/pkg/cash"
+	"github.com/basebandit/gocash/pkg/config"
 )
 
 func main() {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	body, err := api.Fetch("http://data.fixer.io/api/latest?access_key=ea38ed8038cd5c8a41a53fa8fad29a53")
+	configFile := fmt.Sprintf("%s/config.json", wd)
+
+	cfg, err := config.LoadConfig(configFile)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if cfg.ApiKey == "" {
+		log.Fatal("Missing API Key")
+	}
+
+	url := fmt.Sprintf(cfg.Api, cfg.ApiKey)
+
+	body, err := api.Fetch(url)
 	if err != nil {
 		log.Fatal(err)
 	}
