@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	ApiKey *string `json:"api_key"`
+	ApiKey string `json:"api_key"`
 }
 
 //LoadConfig loads the configuration file from the specified filepath
