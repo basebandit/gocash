@@ -16,3 +16,15 @@ func unmarshalJSON(data []byte) (map[string]interface{}, error) {
 }
 
 
+//ParseRates retrieves rates object from the decoded json response
+func ParseRates(data []byte) map[string]interface{} {
+	var r map[string]interface{}
+	res, err := unmarshalJSON(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if rates, ok := res["rates"]; ok {
+		r = rates.(map[string]interface{})
+	}
+	return r
+}
