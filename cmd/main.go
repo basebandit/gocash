@@ -7,10 +7,14 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/basebandit/gocash/pkg/api"
 	"github.com/basebandit/gocash/pkg/cash"
 	"github.com/basebandit/gocash/pkg/config"
+	"github.com/gernest/wow"
+	"github.com/gernest/wow/spin"
 	"github.com/fatih/color"
 )
 
@@ -24,7 +28,7 @@ var boldRed = red.Add(color.Bold)
 func main() {
 	args := os.Args[1:]
 
-	if len(args) == 0 {
+	if (len(args) < 3) || (len(args) > 3) {
 		help()
 		os.Exit(1)
 	}
@@ -35,9 +39,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	from := args[1]
 
-	to := args[2]
+	from := strings.ToUpper(args[1])
+
+	to := strings.ToUpper(args[2])
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -76,9 +81,20 @@ func main() {
 		money.Base = base
 	}
 
+	green := color.New(color.FgGreen).SprintFunc()
+
+	//start loader 
+	w := wow.New(os.Stdout, spin.Get(spin.Dots), green("  Converting ..."))
+	w.Start()
+	time.Sleep(2 * time.Second)
+	
 	//convert
 	amt, err := money.Convert(amount, from, to)
-	color.Green(strconv.FormatFloat(amt, 'f', 6, 64))
+
+	w.PersistWith(spin.Spinner{Frames: []string{"👍  "}},fmt.Sprintf("%s\n",green(strconv.FormatFloat(amt, 'f', 6, 64))))
+
+	c := color.New(color.FgMagenta).Add(color.Bold).Add(color.Underline)
+	c.Println(fmt.Sprintf("Conversion of %s %.2f to %s\n",from,amount,to))
 }
 
 func help() {
@@ -88,12 +104,9 @@ func help() {
 		$ cash <options>
 	Options
 	  	--config -c   config file
-		--save -s 			Save default currencies
-		--purge -p 			Purge cached API response to get the latest data
 	Examples
 		$ cash --key [key]
-		$ cash 10 usd eur pln
-		$ cash --save usd aud 
+		$ cash 10 usd eur 
 	`
 	fmt.Println(help)
 }
