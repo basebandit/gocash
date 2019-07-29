@@ -1,0 +1,4 @@
+{
+  "api_key": "",
+  "api": "http://data.fixer.io/api/latest?access_key=%s"
+}
