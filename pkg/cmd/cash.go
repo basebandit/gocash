@@ -76,7 +76,6 @@ func RunConverter() {
 	currSrc := fmt.Sprintf("%s/currencies.json", parentDir)
 	configSrc := fmt.Sprintf("%s/config.json", parentDir)
 
-	fmt.Println(currDest, currSrc)
 	//copy config
 	if err := copyFile(configSrc, configDest); err != nil {
 		boldRed.Println(err.Error())
