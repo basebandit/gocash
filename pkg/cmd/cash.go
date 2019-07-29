@@ -137,14 +137,14 @@ func RunConverter() {
 
 	//Validate from currency
 	if _, ok := currencies[from]; !ok {
-		w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, yellow(fmt.Sprintf("The %s currency not found\n", from)))
+		w.PersistWith(spin.Spinner{Frames: []string{"\xF0\x9F\x91\x8D  "}}, yellow(fmt.Sprintf("The %s currency not found\n", from)))
 	}
 
 	for _, t := range toItems {
 		to := strings.ToUpper(t)
 		//Validate to currency
 		if _, ok := currencies[to]; !ok {
-			w.PersistWith(spin.Spinner{Frames: []string{"👎  "}}, yellow(fmt.Sprintf("The %s currency not found\n", to)))
+			w.PersistWith(spin.Spinner{Frames: []string{"\xF0\x9F\x91\x8E  "}}, yellow(fmt.Sprintf("The %s currency not found\n", to)))
 			os.Exit(1)
 		}
 		//convert
