@@ -11,11 +11,11 @@ import (
 	"time"
 
 	"github.com/basebandit/gocash/pkg/api"
-	"github.com/basebandit/gocash/pkg/cash"
 	"github.com/basebandit/gocash/pkg/config"
+	"github.com/basebandit/gocash/pkg/currency"
+	"github.com/fatih/color"
 	"github.com/gernest/wow"
 	"github.com/gernest/wow/spin"
-	"github.com/fatih/color"
 )
 
 var configDir = flag.String("config", "", "Configuration directory path")
@@ -38,7 +38,6 @@ func main() {
 		color.Red(err.Error())
 		os.Exit(1)
 	}
-
 
 	from := strings.ToUpper(args[1])
 
@@ -73,28 +72,46 @@ func main() {
 
 	money := new(api.Money)
 
-	if rates := cash.ParseRates(body); rates != nil {
+	if rates := currency.ParseRates(body); rates != nil {
 		money.Rates = rates
 	}
 
-	if base := cash.ParseBase(body); base != "" {
+	if base := currency.ParseBase(body); base != "" {
 		money.Base = base
 	}
 
 	green := color.New(color.FgGreen).SprintFunc()
+	yellow := color.New(color.FgYellow).SprintFunc()
 
-	//start loader 
+	//start loader
 	w := wow.New(os.Stdout, spin.Get(spin.Dots), green("  Converting ..."))
 	w.Start()
 	time.Sleep(2 * time.Second)
-	
+
+	currencyFile := fmt.Sprintf("%s/currencies.json", parentDir)
+	currencies, err := config.GetCurrencies(currencyFile)
+
+	if err != nil {
+		boldRed.Println(err.Error())
+		os.Exit(1)
+	}
+
+	//Validate from currency
+	if _, ok := currencies[from]; !ok {
+		w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, yellow(fmt.Sprintf("The %s currency not found\n", from)))
+	}
+	//Validate to currency
+	if _, ok := currencies[to]; !ok {
+		w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, yellow(fmt.Sprintf("The %s currency not found\n", to)))
+	}
+
 	//convert
 	amt, err := money.Convert(amount, from, to)
 
-	w.PersistWith(spin.Spinner{Frames: []string{"👍  "}},fmt.Sprintf("%s\n",green(strconv.FormatFloat(amt, 'f', 6, 64))))
+	w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, fmt.Sprintf("%s (%s) %s\n", green(strconv.FormatFloat(amt, 'f', 6, 64)), to, currencies[to]))
 
-	c := color.New(color.FgMagenta).Add(color.Bold).Add(color.Underline)
-	c.Println(fmt.Sprintf("Conversion of %s %.2f to %s\n",from,amount,to))
+	c := color.New(color.FgHiBlack).Add(color.Bold).Add(color.Underline)
+	c.Println(fmt.Sprintf("Conversion of %s %.f to %s\n", from, amount, to))
 }
 
 func help() {
