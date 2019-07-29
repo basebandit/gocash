@@ -67,23 +67,22 @@ func RunConverter() {
 			boldRed.Println(err.Error())
 			os.Exit(1)
 		}
-	}
+		//Then we copy our currency  and config json files
+		currDest := fmt.Sprintf("%s/currencies.json", configDir)
+		configDest := fmt.Sprintf("%s/config.json", configDir)
 
-	//Then we copy our currency  and config json files
-	currDest := fmt.Sprintf("%s/currencies.json", configDir)
-	configDest := fmt.Sprintf("%s/config.json", configDir)
+		currSrc := fmt.Sprintf("%s/currencies.json", parentDir)
+		configSrc := fmt.Sprintf("%s/config.json", parentDir)
 
-	currSrc := fmt.Sprintf("%s/currencies.json", parentDir)
-	configSrc := fmt.Sprintf("%s/config.json", parentDir)
+		//copy config
+		if err := copyFile(configSrc, configDest); err != nil {
+			boldRed.Println(err.Error())
+		}
 
-	//copy config
-	if err := copyFile(configSrc, configDest); err != nil {
-		boldRed.Println(err.Error())
-	}
-
-	//copy currencies
-	if err := copyFile(currSrc, currDest); err != nil {
-		boldRed.Println(err.Error())
+		//copy currencies
+		if err := copyFile(currSrc, currDest); err != nil {
+			boldRed.Println(err.Error())
+		}
 	}
 
 	configFile := fmt.Sprintf("%s/config.json", configDir)
