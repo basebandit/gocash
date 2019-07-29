@@ -1,4 +1,0 @@
-{
-  "api_key": "<YOUR API KEY>",
-  "api": "http://data.fixer.io/api/latest?access_key=%s"
-}
