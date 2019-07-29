@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -41,12 +40,16 @@ func RunConverter() {
 
 	toItems := args[2:]
 
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// wd, err := os.Getwd()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// parentDir := filepath.Dir(wd)
 
-	parentDir := joinPath(wd, "../../")
+	// fmt.Println(parentDir)
+	goPath := os.Getenv("GOPATH")
+	parentDir := fmt.Sprintf("%s/src/github.com/basebandit/gocash", goPath)
+
 	homeDir, err := homedir.Dir()
 
 	configDir := joinPath(homeDir, ".gocash")
