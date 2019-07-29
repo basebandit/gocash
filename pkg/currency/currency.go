@@ -1,4 +1,4 @@
-package cash
+package currency
 
 import (
 	"encoding/json"
@@ -15,7 +15,6 @@ func unmarshalJSON(data []byte) (map[string]interface{}, error) {
 	return f, nil
 }
 
-
 //ParseRates retrieves rates object from the decoded json response
 func ParseRates(data []byte) map[string]interface{} {
 	var r map[string]interface{}
@@ -29,7 +28,6 @@ func ParseRates(data []byte) map[string]interface{} {
 	return r
 }
 
-
 //ParseBase retrieves base currency value from the decoded json response
 func ParseBase(data []byte) string {
 	var b string
@@ -42,3 +40,4 @@ func ParseBase(data []byte) string {
 	}
 	return b
 }
+
