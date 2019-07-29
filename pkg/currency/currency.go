@@ -2,8 +2,78 @@ package currency
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"errors"
 )
+
+
+const (
+	//Version current api version
+	Version = "0.1"
+)
+//Currency holds our base currency and the exchange rates of other currencies against the base currency
+type Currency struct {
+	Rates map[string]interface{}
+	Base  string
+}
+
+func (c *Currency) getRate(to, from string) (rate float64, fxErr error) {
+	// Return an error if to rate isn't in the rates array
+	if _, ok := c.Rates[to]; !ok {
+		fxErr = errors.New("fx error: missing to rate")
+		return
+	}
+
+	// Return an error if from rate isn't in the rates array
+	if _, ok := c.Rates[from]; !ok {
+		fxErr = errors.New("fx error: missing from rate")
+		return
+	}
+
+	// If `from` currency == base, return the basic exchange rate for the `to` currency
+	if from == c.Base {
+		to := c.Rates[to]
+		rate = to.(float64)
+		return
+	}
+
+	// If `to` currency == fx.base, return the basic inverse rate of the `from` currency
+	if to == c.Base {
+		from := c.Rates[from]
+		r := from.(float64)
+		rate = 1 / r
+		return
+	}
+
+	// Otherwise, return the `to` rate multipled by the inverse of the `from` rate to get the
+	// relative exchange rate between the two currencies
+	t := c.Rates[to]
+	rTo := t.(float64)
+
+	f := c.Rates[from]
+	rFrm := f.(float64)
+
+	rate = rTo * (1 / rFrm)
+	return
+}
+
+//Convert converts a value from one currency to another
+func (c *Currency) Convert(val float64, from string, to string) (rate float64, cnvtErr error) {
+	if from == "" && to == "" {
+		cnvtErr = errors.New("fx error: missing either from or to rate")
+		return
+	}
+	r, err := c.getRate(to, from)
+
+	if err != nil {
+		cnvtErr = err
+		return
+	}
+	rate = val * r
+	return
+}
 
 //UnmarshalJSON decode dynamic json data to a (key,value) pair for internal use
 func unmarshalJSON(data []byte) (map[string]interface{}, error) {
@@ -41,3 +111,21 @@ func ParseBase(data []byte) string {
 	return b
 }
 
+//Fetch makes a GET request to the given resource url
+func Fetch(url string) ([]byte, error) {
+	resp, err := http.Get(url)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
