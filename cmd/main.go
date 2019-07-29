@@ -22,13 +22,10 @@ var configDir = flag.String("config", "", "Configuration directory path")
 var red = color.New(color.FgRed)
 var boldRed = red.Add(color.Bold)
 
-// var from = flag.Bool("from", false, "Enable debug output")
-// var to = flag.Bool("to", false, "Enable developer mode (generates self-signed certificates for all hostnames)")
-
 func main() {
 	args := os.Args[1:]
 
-	if (len(args) < 3) || (len(args) > 3) {
+	if len(args) < 3 {
 		help()
 		os.Exit(1)
 	}
@@ -41,7 +38,7 @@ func main() {
 
 	from := strings.ToUpper(args[1])
 
-	to := strings.ToUpper(args[2])
+	toItems := args[2:]
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -53,7 +50,8 @@ func main() {
 	cfg, err := config.LoadConfig(configFile)
 
 	if err != nil {
-		log.Fatal(err)
+		boldRed.Println(err.Error())
+		os.Exit(1)
 	}
 
 	if cfg.ApiKey == "" {
@@ -67,7 +65,8 @@ func main() {
 
 	body, err := api.Fetch(url)
 	if err != nil {
-		log.Fatal(err)
+		boldRed.Println(err.Error())
+		os.Exit(1)
 	}
 
 	money := new(api.Money)
@@ -100,18 +99,25 @@ func main() {
 	if _, ok := currencies[from]; !ok {
 		w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, yellow(fmt.Sprintf("The %s currency not found\n", from)))
 	}
-	//Validate to currency
-	if _, ok := currencies[to]; !ok {
-		w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, yellow(fmt.Sprintf("The %s currency not found\n", to)))
+
+	for _, t := range toItems {
+		to := strings.ToUpper(t)
+		//Validate to currency
+		if _, ok := currencies[to]; !ok {
+			w.PersistWith(spin.Spinner{Frames: []string{"👎  "}}, yellow(fmt.Sprintf("The %s currency not found\n", to)))
+		}
+		//convert
+		amt, err := money.Convert(amount, from, to)
+
+		if err != nil {
+			boldRed.Println(err.Error())
+			os.Exit(1)
+		}
+		w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, fmt.Sprintf("%s (%s) %s\n", green(strconv.FormatFloat(amt, 'f', 2, 64)), to, currencies[to]))
 	}
 
-	//convert
-	amt, err := money.Convert(amount, from, to)
-
-	w.PersistWith(spin.Spinner{Frames: []string{"👍  "}}, fmt.Sprintf("%s (%s) %s\n", green(strconv.FormatFloat(amt, 'f', 6, 64)), to, currencies[to]))
-
 	c := color.New(color.FgHiBlack).Add(color.Bold).Add(color.Underline)
-	c.Println(fmt.Sprintf("Conversion of %s %.f to %s\n", from, amount, to))
+	c.Println(fmt.Sprintf("Conversion of %s %.f \n", from, amount))
 }
 
 func help() {
