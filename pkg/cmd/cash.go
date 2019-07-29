@@ -98,7 +98,7 @@ func RunConverter() {
 	if cfg.ApiKey == "" {
 		boldRed.Println("\nFixer.io API key not found!")
 		color.Cyan("Get it here for free: https://fixer.io/signup/free")
-		color.Cyan("Then run `cash --key [key]` to save it\n")
+		color.Cyan("Then save it inside `.gocash/config.json` in your home directory\n")
 		os.Exit(1)
 	}
 
