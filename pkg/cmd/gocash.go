@@ -62,7 +62,7 @@ func RunConverter() {
 	cfg, err := config.LoadConfig(configFile)
 
 	if err != nil {
-		boldRed.Printf("Could not find your config file.Copy %s inside %s\n", yellow(configFileURL), yellow(configDir), err)
+		boldRed.Printf("Could not find your config file.Copy %s inside %s\n", yellow(configFileURL), yellow(configDir))
 		os.Exit(1)
 	}
 
@@ -70,7 +70,7 @@ func RunConverter() {
 	currencies, err := config.GetCurrencies(currencyFile)
 
 	if err != nil {
-		boldRed.Printf("Could not find currencies list.Copy %s inside %s\n", yellow(currencyFileURL), yellow(configDir), err)
+		boldRed.Printf("Could not find currencies list.Copy %s inside %s\n", yellow(currencyFileURL), yellow(configDir))
 		os.Exit(1)
 	}
 
