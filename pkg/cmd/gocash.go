@@ -70,7 +70,7 @@ func RunConverter() {
 	currencies, err := config.GetCurrencies(currencyFile)
 
 	if err != nil {
-		boldRed.Printf("Could not find currencies list.Copy %s inside %s\n", yellow(currencyFileURL), yellow(configDir))
+		boldRed.Printf("Could not find currencies list.Copy %s inside %s\n", yellow(currencyFileURL), yellow(configDir), err)
 		os.Exit(1)
 	}
 
