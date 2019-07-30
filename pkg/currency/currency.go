@@ -43,7 +43,7 @@ func (c *Currency) getExchangeRate(to, from string) (rate float64, fxErr error) 
 		return
 	}
 
-	// Otherwise, return the `to` rate multipled by the inverse of the `from` rate to get the
+	// Otherwise, return the `to` rate multiplied by the inverse of the `from` rate to get the
 	// relative exchange rate between the two currencies
 	t := c.Rates[to]
 	rTo := t.(float64)
