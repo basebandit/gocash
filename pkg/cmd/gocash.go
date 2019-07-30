@@ -62,7 +62,7 @@ func RunConverter() {
 	cfg, err := config.LoadConfig(configFile)
 
 	if err != nil {
-		boldRed.Printf("Could not find your config file.Copy %s inside %s\n", yellow(configFileURL), yellow(configDir))
+		boldRed.Printf("Could not find your config file.Copy %s inside %s\n", yellow(configFileURL), yellow(configDir), err)
 		os.Exit(1)
 	}
 
