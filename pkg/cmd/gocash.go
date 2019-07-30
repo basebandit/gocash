@@ -55,7 +55,7 @@ func RunConverter() {
 
 	configFileURL := "https://github.com/basebandit/gocash/blob/master/config.json"
 
-	currencyFileURL := "https://github.com/basebandit/gocash/blob/master/currency.json"
+	currencyFileURL := "https://github.com/basebandit/gocash/blob/master/currencies.json"
 
 	configFile := fmt.Sprintf("%s/config.json", configDir)
 
@@ -70,7 +70,7 @@ func RunConverter() {
 	currencies, err := config.GetCurrencies(currencyFile)
 
 	if err != nil {
-		boldRed.Printf("Could not find currency list.Copy %s inside %s\n", yellow(currencyFileURL), yellow(configDir))
+		boldRed.Printf("Could not find currencies list.Copy %s inside %s\n", yellow(currencyFileURL), yellow(configDir))
 		os.Exit(1)
 	}
 
