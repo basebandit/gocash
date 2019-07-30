@@ -2,33 +2,29 @@ package currency
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"errors"
 )
 
-
-const (
-	//Version current api version
-	Version = "0.1"
-)
 //Currency holds our base currency and the exchange rates of other currencies against the base currency
 type Currency struct {
 	Rates map[string]interface{}
 	Base  string
 }
 
-func (c *Currency) getRate(to, from string) (rate float64, fxErr error) {
+//getExchangeRate calculates the exchange rate
+func (c *Currency) getExchangeRate(to, from string) (rate float64, fxErr error) {
 	// Return an error if to rate isn't in the rates array
 	if _, ok := c.Rates[to]; !ok {
-		fxErr = errors.New("fx error: missing to rate")
+		fxErr = errors.New("rates: missing to rate")
 		return
 	}
 
 	// Return an error if from rate isn't in the rates array
 	if _, ok := c.Rates[from]; !ok {
-		fxErr = errors.New("fx error: missing from rate")
+		fxErr = errors.New("rates: missing from rate")
 		return
 	}
 
@@ -39,7 +35,7 @@ func (c *Currency) getRate(to, from string) (rate float64, fxErr error) {
 		return
 	}
 
-	// If `to` currency == fx.base, return the basic inverse rate of the `from` currency
+	// If `to` currency == base, return the basic inverse rate of the `from` currency
 	if to == c.Base {
 		from := c.Rates[from]
 		r := from.(float64)
@@ -65,7 +61,7 @@ func (c *Currency) Convert(val float64, from string, to string) (rate float64, c
 		cnvtErr = errors.New("fx error: missing either from or to rate")
 		return
 	}
-	r, err := c.getRate(to, from)
+	r, err := c.getExchangeRate(to, from)
 
 	if err != nil {
 		cnvtErr = err
