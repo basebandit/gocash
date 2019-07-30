@@ -4,7 +4,9 @@
   <p align="center">Convert Currency Rates directly from your Terminal!<p>
 
 </p>
+
 [![Go Report Card](https://goreportcard.com/badge/github.com/basebandit/gocash)](https://goreportcard.com/report/github.com/basebandit/gocash)
+
 <!-- <p align="center"><img src="https://github.com/basebandit/gocash/blob/master/change.png" alt="Icon PNG"></p> -->
 
 ## Install
