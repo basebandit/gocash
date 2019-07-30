@@ -5,7 +5,7 @@
 
 </p>
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/basebandit/gocash)](https://goreportcard.com/report/github.com/basebandit/gocash)
+[![Go Report Card](https://goreportcard.com/badge/github.com/basebandit/gocash)](https://goreportcard.com/report/github.com/basebandit/gocash)  [![GitHub license](https://img.shields.io/github/license/basebandit/gocash)](https://github.com/basebandit/gocash/blob/master/LICENSE)
 
 <!-- <p align="center"><img src="https://github.com/basebandit/gocash/blob/master/change.png" alt="Icon PNG"></p> -->
 
