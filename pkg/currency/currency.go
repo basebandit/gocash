@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 //Currency holds our base currency and the exchange rates of other currencies against the base currency
@@ -109,7 +110,10 @@ func ParseBase(data []byte) string {
 
 //Fetch makes a GET request to the given resource url
 func Fetch(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	httpClient := http.Client{
+		Timeout: 5 * time.Second,
+	}
+	resp, err := httpClient.Get(url)
 
 	if err != nil {
 		return nil, err
